@@ -1,14 +1,22 @@
 import React, { Component } from "react";
 
 export default class Game extends Component {
+  isPlayersTurn() {
+    return this.props.currentTurn.activePlayer === this.props.player.id;
+  }
+
   render() {
     const flippedCards = this.props.currentTurn.flippedCards;
 
     return (
       <div className="game">
-      {this.props.cards.map((c) => {
-        const isFlipped = flippedCards.indexOf(c.id) >= 0;
-        return <Card key={c.id} flip={this.props.flip.bind(null, this.props.id, this.props.player.id)} isFlipped={isFlipped} {...c} />;
+      {this.props.cards.map((card) => {
+        const isFlipped = flippedCards.indexOf(card.id) >= 0;
+        const onClick = this.isPlayersTurn() ?
+          this.props.flip.bind(null, this.props.id, this.props.player.id, card.id) :
+          () => { alert("Please wait for your turn!"); };
+
+        return <Card key={card.id} onClick={onClick} isFlipped={isFlipped} {...card} />;
       })}
       </div>
     );
@@ -21,16 +29,12 @@ Game.defaultProps = {
 };
 
 class Card extends Component {
-  handleClick() {
-    return this.props.flip(this.props.id);
-  }
-
   render() {
     const className = this.props.isFlipped ? "revealed" : "hidden";
     const style = { backgroundColor: "#ccc", margin: "10px" };
 
     return (
-      <div className={"card " + className} style={style} onClick={this.handleClick.bind(this)}>
+      <div className={"card " + className} style={style} onClick={this.props.onClick}>
         <div className="card-front">
           <img src={this.props.photo.thumbUrl} />
         </div>
