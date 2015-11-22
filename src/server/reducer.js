@@ -48,7 +48,7 @@ function startGame (state, player1, player2) {
     cards: state.get("cards"),
     currentTurn: {
       activePlayer: player1.id,
-      flippedCards: []
+      flippedCardIds: []
     }
   });
 
@@ -63,8 +63,8 @@ function flipCard (state, gameId, playerId, cardId) {
     console.log(state.toJS());
   }
 
-  var flippedCards = game.getIn(["currentTurn", "flippedCards"]);
-  return state.setIn(["gamesById", gameId, "currentTurn", "flippedCards"], flippedCards.push(cardId));
+  var flippedCardIds = game.getIn(["currentTurn", "flippedCardIds"]);
+  return state.setIn(["gamesById", gameId, "currentTurn", "flippedCardIds"], flippedCardIds.push(cardId));
 }
 
 module.exports = reducer;

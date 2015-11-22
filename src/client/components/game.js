@@ -6,12 +6,12 @@ export default class Game extends Component {
   }
 
   render() {
-    const flippedCards = this.props.currentTurn.flippedCards;
+    const flippedCardIds = this.props.currentTurn.flippedCardIds;
 
     return (
       <div className="game">
       {this.props.cards.map((card) => {
-        const isFlipped = flippedCards.indexOf(card.id) >= 0;
+        const isFlipped = flippedCardIds.indexOf(card.id) >= 0;
         const onClick = this.isPlayersTurn() ?
           this.props.flip.bind(null, this.props.id, this.props.player.id, card.id) :
           () => { alert("Please wait for your turn!"); };

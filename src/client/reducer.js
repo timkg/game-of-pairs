@@ -13,8 +13,8 @@ export default function reducer (state=DEFAULT_STATE, action) {
   case "SET_GAME":
     return state.set("game", fromJS(action.game));
   case "FLIP_CARD":
-    const flippedCards = state.getIn(["game", "currentTurn", "flippedCards"]);
-    return state.setIn(["game", "currentTurn", "flippedCards"], flippedCards.push(action.cardId));
+    const flippedCardIds = state.getIn(["game", "currentTurn", "flippedCardIds"]);
+    return state.setIn(["game", "currentTurn", "flippedCardIds"], flippedCardIds.push(action.cardId));
   default:
     return state;
   }
