@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>EyeEm Pairs</title>
+    <style media="screen">
+      .card {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        float: left;
+      }
+
+      .card.hidden .card-front {
+        display: none;
+      }
+
+      .card.hidden .card-back {
+        display: block;
+      }
+
+      .card.revealed .card-front {
+        display: block;
+      }
+
+      .card.revealed .card-back {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="bundle.js"></script>
+  </body>
+</html>
