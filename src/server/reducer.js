@@ -26,7 +26,24 @@ function reducer (state, action) {
   case "LOGIN":
     return addPlayer(state, action.name, action.socketId);
   case "FLIP_CARD":
-    return flipCard(state, action.gameId, action.playerId, action.cardId);
+    var gameId = action.gameId;
+    var numberOfFlippedCards = state.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]).size;
+    if (numberOfFlippedCards === 0) {
+      return flipCard(state, gameId, action.playerId, action.cardId);
+    }
+    if (numberOfFlippedCards === 1) {
+      var flippedState = flipCard(state, gameId, action.playerId, action.cardId);
+      var flippedCardIds = flippedState.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
+      if (isMatch(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
+        var playerState = addCardsToPlayer(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
+        return playerState;
+        // var removedState = removeCardsFromGame(removedState, gameId, card1Id, card2Id);
+
+      } else {
+        console.log("No match found!")
+      }
+    }
+    break;
   default:
     return state;
   }
@@ -67,6 +84,42 @@ function flipCard (state, gameId, playerId, cardId) {
   return state.setIn(["gamesById", gameId, "currentTurn", "flippedCardIds"], flippedCardIds.push(cardId));
 }
 
+function isMatch (state, gameId, card1Id, card2Id) {
+  var flippedPhotoIds = state.getIn(["gamesById", gameId, "cards"]).toJS().
+                          filter(function (card) {
+                            return card.id === card1Id || card.id === card2Id;
+                          }).
+                          map(function (card) {
+                            return card.photo.id;
+                          });
+
+  return flippedPhotoIds[0] === flippedPhotoIds[1];
+}
+
+function addCardsToPlayer (state, gameId, card1Id, card2Id, playerId) {
+  var cards = state.getIn(["gamesById", gameId, "cards"]).toJS().
+                 filter(function (card) {
+                   return card.id === card1Id || card.id === card2Id;
+                 });
+
+  var players = state.getIn(["gamesById", gameId, "players"]).toJS();
+  var player = players.filter(function (player) {
+                 return player.id === playerId;
+               })[0];
+
+  if (!player.cards) {
+    player.cards = [];
+  }
+
+  player.cards = player.cards.concat(cards);
+
+  return state.setIn(["gamesById", gameId, "players"], players);
+}
+
+function removeCardsFromGame (state, gameId, card1Id, card2Id) {
+
+}
+
 module.exports = reducer;
 
 /*
@@ -78,17 +131,9 @@ function playerHasMovesLeft (state, gameId, playerId) {
 
 }
 
-function isMatch (state, gameId, card1Id, card2Id) {
 
-}
 
-function removeCardsFromGame (state, gameId, card1Id, card2Id) {
 
-}
-
-function addCardsToPlayer (state, gameId, card1Id, card2Id, playerId) {
-
-}
 
 function areCardsLeft (state, gameId) {
 
