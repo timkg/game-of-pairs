@@ -28,6 +28,12 @@ function mapStateToProps(state) {
 
   if (state.get("game")) {
     props.game = state.get("game").toJS();
+    props.opponent = props.game.players[0].id === props.player.id ?
+                       props.game.players[1] :
+                       props.game.players[0];
+    props.player = props.game.players[0].id === props.player.id ?
+                     props.game.players[0] :
+                     props.game.players[1];
   }
 
   return props;

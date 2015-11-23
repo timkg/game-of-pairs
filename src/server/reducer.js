@@ -1,6 +1,6 @@
 var Immutable = require("immutable");
 var photos = require("../../photos.json").photos;
-var cards = photos.items.
+var cards = photos.items.slice(0, 5).
               map(function (photo) {
                 return [{photo: photo}, {photo: photo}];
               }).
@@ -57,10 +57,10 @@ function reducer (state, action) {
 function addPlayer (state, playerName, playerId) {
   if (state.get("lobby").size > 0) {
     var waitingPlayer = state.get("lobby").first();
-    return startGame(state.setIn(["lobby"], state.get("lobby").shift()), waitingPlayer, { name: playerName, id: playerId });
+    return startGame(state.setIn(["lobby"], state.get("lobby").shift()), waitingPlayer, { name: playerName, id: playerId, cards: [] });
   }
 
-  return state.setIn(["lobby"], state.get("lobby").push({ name: playerName, id: playerId }));
+  return state.setIn(["lobby"], state.get("lobby").push({ name: playerName, id: playerId, cards: [] }));
 }
 
 function startGame (state, player1, player2) {
