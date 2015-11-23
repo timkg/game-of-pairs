@@ -22,7 +22,7 @@ export default class Game extends Component {
         </div>
         <div className="cards">
 
-        <header>
+        <header className="turn-info">
           {this.isPlayersTurn() ? <p>Your turn!</p> : <p>Please wait for your turn.</p>}
         </header>
 
