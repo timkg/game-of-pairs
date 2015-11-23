@@ -34,10 +34,14 @@ function reducer (state, action) {
     if (numberOfFlippedCards === 1) {
       var flippedState = flipCard(state, gameId, action.playerId, action.cardId);
       var flippedCardIds = flippedState.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
+
+      var card1Id = flippedCardIds.get(0);
+      var card2Id = flippedCardIds.get(1);
+
       if (isMatch(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
         var playerState = addCardsToPlayer(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
-        return playerState;
-        // var removedState = removeCardsFromGame(removedState, gameId, card1Id, card2Id);
+        var removedState = removeCardsFromGame(playerState, gameId, card1Id, card2Id);
+        return removedState;
 
       } else {
         console.log("No match found!")
@@ -117,7 +121,22 @@ function addCardsToPlayer (state, gameId, card1Id, card2Id, playerId) {
 }
 
 function removeCardsFromGame (state, gameId, card1Id, card2Id) {
+  var card1Index = state.getIn(["gamesById", gameId, "cards"]).findIndex(function (card) {
+    return card.get("id") === card1Id;
+  });
 
+  var card2Index = state.getIn(["gamesById", gameId, "cards"]).findIndex(function (card) {
+    return card.get("id") === card2Id;
+  });
+
+  var newState1 = state.updateIn(["gamesById", gameId, "cards", card1Index], function (card) {
+    return card.set("isRemoved", true);
+  });
+  var newState2 = newState1.updateIn(["gamesById", gameId, "cards", card2Index], function (card) {
+    return card.set("isRemoved", true);
+  });
+
+  return newState2;
 }
 
 module.exports = reducer;
