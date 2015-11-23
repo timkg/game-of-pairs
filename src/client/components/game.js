@@ -12,6 +12,10 @@ export default class Game extends Component {
   }
 
   handleCardClick(card) {
+    if (this.isCardFlipped(card.id)) {
+      return;
+    }
+
     if (this.isPlayersTurn() && this.props.game.currentTurn.flippedCardIds.length === 1) {
       setTimeout(function () {
         this.props.endTurn(this.props.game.id, this.props.player.id);
@@ -23,6 +27,30 @@ export default class Game extends Component {
     } else {
       alert("Please wait for your turn!");
     }
+  }
+
+  didPlayerWin() {
+    return this.props.game.winner && this.props.game.winner.id === this.props.player.id;
+  }
+
+  didPlayerLose() {
+    return this.props.game.winner && this.props.game.winner.id !== this.props.player.id;
+  }
+
+  getStatusMessage() {
+    if (this.didPlayerWin()) {
+      return "Congratulations, you won!";
+    }
+
+    if (this.didPlayerLose()) {
+      return "Sorry, you lost this round!";
+    }
+
+    if (this.isPlayersTurn()) {
+      return "Your turn!";
+    }
+
+    return "Please wait for your turn.";
   }
 
   render() {
@@ -39,7 +67,7 @@ export default class Game extends Component {
         <div className="cards">
 
         <header className="turn-info">
-          {this.isPlayersTurn() ? <p>Your turn!</p> : <p>Please wait for your turn.</p>}
+          {this.getStatusMessage()}
         </header>
 
         {cards.map((card) => {
