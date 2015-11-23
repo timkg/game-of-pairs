@@ -1,17 +1,6 @@
 var Immutable = require("immutable");
-var photos = require("../../photos.json").photos;
 var shuffle = require("fisher-yates");
-var cards = photos.items.slice(0, 5).
-              map(function (photo) {
-                return [{photo: photo}, {photo: photo}];
-              }).
-              reduce(function (acc, curr) {
-                return acc.concat(curr);
-              }, []).
-              map(function (card, index) {
-                card.id = "card-" + index;
-                return card;
-              });
+var cards = require("./cards");
 
 var DEFAULT_STATE = Immutable.fromJS({
   lobby: [],
