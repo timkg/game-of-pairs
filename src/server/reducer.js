@@ -13,12 +13,10 @@ var cards = photos.items.slice(0, 5).
                 return card;
               });
 
-var shuffledCards = shuffle(cards);
-
 var DEFAULT_STATE = Immutable.fromJS({
   lobby: [],
   gamesById: {},
-  cards: shuffledCards
+  cards: cards
 });
 
 function reducer (state, action) {
@@ -65,7 +63,7 @@ function startGame (state, player1, player2) {
   var newGame = Immutable.fromJS({
     id: player1.id + "-" + player2.id,
     players: [player1, player2],
-    cards: state.get("cards"),
+    cards: shuffle(state.get("cards").toJS()),
     currentTurn: {
       activePlayer: player1.id,
       flippedCardIds: []
