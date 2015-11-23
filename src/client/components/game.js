@@ -30,16 +30,18 @@ export default class Game extends Component {
 class Card extends Component {
   render() {
     const className = this.props.isFlipped ? "revealed" : "hidden";
-    const style = { backgroundColor: "#ccc", margin: "10px" };
+    const style = { margin: "10px" };
 
     return (
-      <div className={"card " + className} style={style} onClick={this.props.onClick}>
-        <div className="card-front">
-          <img src={this.props.photo.thumbUrl} />
+      this.props.isRemoved ?
+        <div className={"card"} style={style}></div> :
+        <div className={"card " + className} style={style} onClick={this.props.onClick}>
+          <div className="card-front">
+            <img src={this.props.photo.thumbUrl} />
+          </div>
+          <div className="card-back" style={{backgroundColor: "#ccc", height: "100%"}}>
+          </div>
         </div>
-        <div className="card-back">
-        </div>
-      </div>
     );
   }
 }
