@@ -32,13 +32,12 @@ function reducer (state, action) {
     return flipCard(state, action.gameId, action.playerId, action.cardId);
   case "END_TURN":
     var gameId = action.gameId;
-
     var flippedCardIds = state.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
     var card1Id = flippedCardIds.get(0);
     var card2Id = flippedCardIds.get(1);
 
-    if (isMatch(state, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
-      var playerState = addCardsToPlayer(state, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
+    if (isMatch(state, gameId, card1Id, card2Id)) {
+      var playerState = addCardsToPlayer(state, gameId, card1Id, card2Id, action.playerId);
       var removedState = removeCardsFromGame(playerState, gameId, card1Id, card2Id);
       if (areCardsLeft(removedState, gameId)) {
         return grantNewTurnToActivePlayer(removedState, gameId);
@@ -77,14 +76,8 @@ function startGame (state, player1, player2) {
 }
 
 function flipCard (state, gameId, playerId, cardId) {
-  var game = state.getIn(["gamesById", gameId]);
+  var flippedCardIds = state.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
 
-  if (!game) {
-    console.error("received invalid action, game %s not active in current state", gameId);
-    console.log(state.toJS());
-  }
-
-  var flippedCardIds = game.getIn(["currentTurn", "flippedCardIds"]);
   return state.setIn(["gamesById", gameId, "currentTurn", "flippedCardIds"], flippedCardIds.push(cardId));
 }
 

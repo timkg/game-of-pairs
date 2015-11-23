@@ -3,8 +3,6 @@ import { fromJS } from "immutable";
 const DEFAULT_STATE = fromJS({});
 
 export default function reducer (state=DEFAULT_STATE, action) {
-  console.log("client store received action", action);
-
   switch (action.type) {
   case "LOGIN":
     return state.set("player", fromJS({ name: action.name, id: action.socketId }));

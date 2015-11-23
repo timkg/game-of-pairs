@@ -54,33 +54,32 @@ export default class Game extends Component {
   }
 
   render() {
-    const { id, currentTurn, cards } = this.props.game;
-
     return (
       <div className="game">
         <div className="player-cards">
           <h2>{this.props.player.name}</h2>
           {this.props.player.cards.map((card) => {
-            return <div className="card--won"><img src={card.photo.thumbUrl} /></div>;
+            return <div key={card.id} className="card--won"><img src={card.photo.thumbUrl} /></div>;
           })}
         </div>
+
         <div className="cards">
+          <header className="turn-info">
+            {this.getStatusMessage()}
+          </header>
 
-        <header className="turn-info">
-          {this.getStatusMessage()}
-        </header>
+          {this.props.game.cards.map((card) => {
+            const isFlipped = this.isCardFlipped(card.id);
+            const onClick = this.handleCardClick.bind(this, card);
 
-        {cards.map((card) => {
-          const isFlipped = this.isCardFlipped(card.id);
-          const onClick = this.handleCardClick.bind(this, card);
-
-          return <Card key={card.id} onClick={onClick} isFlipped={isFlipped} {...card} />;
-        })}
+            return <Card key={card.id} onClick={onClick} isFlipped={isFlipped} {...card} />;
+          })}
         </div>
+
         <div className="opponent-cards">
           <h2>{this.props.opponent.name}</h2>
           {this.props.opponent.cards.map((card) => {
-            return <div className="card--won"><img src={card.photo.thumbUrl} /></div>;
+            return <div key={card.id} className="card--won"><img src={card.photo.thumbUrl} /></div>;
           })}
         </div>
       </div>

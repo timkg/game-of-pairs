@@ -11,12 +11,7 @@ const socket = io(`${location.protocol}//${location.hostname}:8090`);
 const createStoreWithMiddleware = applyMiddleware(middleware(socket))(createStore);
 const store = createStoreWithMiddleware(reducer);
 
-socket.on("connect", () => {
-  console.log("connected with id %s", socket.id)
-});
-
 socket.on("state", (state) => {
-  console.log("received state from server", state);
   store.dispatch({ type: "SET_LOBBY", lobby: state.lobby });
 
   const currentGame = Object.keys(state.gamesById).
@@ -26,10 +21,6 @@ socket.on("state", (state) => {
   if (currentGame) {
     store.dispatch({ type: "SET_GAME", game: currentGame });
   }
-});
-
-store.subscribe(() => {
-  console.log("client store updated", store.getState().toJS());
 });
 
 const target = document.createElement("div");
