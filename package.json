@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "dotenv": "^1.2.0",
+    "fisher-yates": "^1.0.3",
     "immutable": "^3.7.5",
     "object-assign": "^4.0.1",
     "react": "^0.14.3",

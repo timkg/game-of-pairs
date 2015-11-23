@@ -1,5 +1,6 @@
 var Immutable = require("immutable");
 var photos = require("../../photos.json").photos;
+var shuffle = require("fisher-yates");
 var cards = photos.items.slice(0, 5).
               map(function (photo) {
                 return [{photo: photo}, {photo: photo}];
@@ -12,10 +13,12 @@ var cards = photos.items.slice(0, 5).
                 return card;
               });
 
+var shuffledCards = shuffle(cards);
+
 var DEFAULT_STATE = Immutable.fromJS({
   lobby: [],
   gamesById: {},
-  cards: cards
+  cards: shuffledCards
 });
 
 function reducer (state, action) {
