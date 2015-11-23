@@ -28,9 +28,11 @@ function reducer (state, action) {
   case "FLIP_CARD":
     var gameId = action.gameId;
     var numberOfFlippedCards = state.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]).size;
+
     if (numberOfFlippedCards === 0) {
       return flipCard(state, gameId, action.playerId, action.cardId);
     }
+
     if (numberOfFlippedCards === 1) {
       var flippedState = flipCard(state, gameId, action.playerId, action.cardId);
       var flippedCardIds = flippedState.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
@@ -41,10 +43,9 @@ function reducer (state, action) {
       if (isMatch(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
         var playerState = addCardsToPlayer(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
         var removedState = removeCardsFromGame(playerState, gameId, card1Id, card2Id);
-        return removedState;
-
+        return grantNewTurnToActivePlayer(removedState, gameId);
       } else {
-        console.log("No match found!")
+        return changePlayerTurn(flippedState, gameId, action.playerId);
       }
     }
     break;
@@ -117,7 +118,7 @@ function addCardsToPlayer (state, gameId, card1Id, card2Id, playerId) {
 
   player.cards = player.cards.concat(cards);
 
-  return state.setIn(["gamesById", gameId, "players"], players);
+  return state.setIn(["gamesById", gameId, "players"], Immutable.fromJS(players));
 }
 
 function removeCardsFromGame (state, gameId, card1Id, card2Id) {
@@ -137,6 +138,22 @@ function removeCardsFromGame (state, gameId, card1Id, card2Id) {
   });
 
   return newState2;
+}
+
+function grantNewTurnToActivePlayer (state, gameId) {
+  return state.setIn(["gamesById", gameId, "currentTurn", "flippedCardIds"], Immutable.fromJS([]));
+}
+
+function changePlayerTurn (state, gameId, previousPlayerId) {
+  var newPlayer = state.getIn(["gamesById", gameId, "players"]).toJS().
+                      filter(function (player) {
+                        return player.id !== previousPlayerId;
+                      })[0];
+
+  return state.setIn(["gamesById", gameId, "currentTurn"], Immutable.fromJS({
+    activePlayer: newPlayer.id,
+    flippedCardIds: []
+  }));
 }
 
 module.exports = reducer;
