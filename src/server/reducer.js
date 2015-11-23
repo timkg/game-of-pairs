@@ -29,35 +29,25 @@ function reducer (state, action) {
   case "LOGIN":
     return addPlayer(state, action.name, action.socketId);
   case "FLIP_CARD":
+    return flipCard(state, action.gameId, action.playerId, action.cardId);
+  case "END_TURN":
     var gameId = action.gameId;
-    var numberOfFlippedCards = state.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]).size;
 
-    if (numberOfFlippedCards === 0) {
-      return flipCard(state, gameId, action.playerId, action.cardId);
-    }
+    var flippedCardIds = state.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
+    var card1Id = flippedCardIds.get(0);
+    var card2Id = flippedCardIds.get(1);
 
-    if (numberOfFlippedCards === 1) {
-      var flippedState = flipCard(state, gameId, action.playerId, action.cardId);
-      var flippedCardIds = flippedState.getIn(["gamesById", gameId, "currentTurn", "flippedCardIds"]);
-
-      var card1Id = flippedCardIds.get(0);
-      var card2Id = flippedCardIds.get(1);
-
-      if (isMatch(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
-        var playerState = addCardsToPlayer(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
-        var removedState = removeCardsFromGame(playerState, gameId, card1Id, card2Id);
-
-        if (areCardsLeft(removedState, gameId)) {
-          return grantNewTurnToActivePlayer(removedState, gameId);
-        } else {
-          return declareWinner(removedState, gameId);
-        }
-
+    if (isMatch(state, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
+      var playerState = addCardsToPlayer(state, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
+      var removedState = removeCardsFromGame(playerState, gameId, card1Id, card2Id);
+      if (areCardsLeft(removedState, gameId)) {
+        return grantNewTurnToActivePlayer(removedState, gameId);
       } else {
-        return changePlayerTurn(flippedState, gameId, action.playerId);
+        return declareWinner(removedState, gameId);
       }
+    } else {
+      return changePlayerTurn(state, gameId, action.playerId);
     }
-    break;
   default:
     return state;
   }
@@ -142,6 +132,7 @@ function removeCardsFromGame (state, gameId, card1Id, card2Id) {
   var newState1 = state.updateIn(["gamesById", gameId, "cards", card1Index], function (card) {
     return card.set("isRemoved", true);
   });
+
   var newState2 = newState1.updateIn(["gamesById", gameId, "cards", card2Index], function (card) {
     return card.set("isRemoved", true);
   });

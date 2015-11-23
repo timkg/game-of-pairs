@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 
+const FLIPPED_CARD_VISIBILITY_DURATION = 1000;
+
 export default class Game extends Component {
   isPlayersTurn() {
     return this.props.game.currentTurn.activePlayer === this.props.player.id;
@@ -7,6 +9,20 @@ export default class Game extends Component {
 
   isCardFlipped(cardId) {
     return this.props.game.currentTurn.flippedCardIds.indexOf(cardId) >= 0;
+  }
+
+  handleCardClick(card) {
+    if (this.isPlayersTurn() && this.props.game.currentTurn.flippedCardIds.length === 1) {
+      setTimeout(function () {
+        this.props.endTurn(this.props.game.id, this.props.player.id);
+      }.bind(this), FLIPPED_CARD_VISIBILITY_DURATION);
+    }
+
+    if (this.isPlayersTurn()) {
+      this.props.flip(this.props.game.id, this.props.player.id, card.id);
+    } else {
+      alert("Please wait for your turn!");
+    }
   }
 
   render() {
@@ -28,9 +44,7 @@ export default class Game extends Component {
 
         {cards.map((card) => {
           const isFlipped = this.isCardFlipped(card.id);
-          const onClick = this.isPlayersTurn() ?
-            this.props.flip.bind(null, id, this.props.player.id, card.id) :
-            () => { alert("Please wait for your turn!"); };
+          const onClick = this.handleCardClick.bind(this, card);
 
           return <Card key={card.id} onClick={onClick} isFlipped={isFlipped} {...card} />;
         })}

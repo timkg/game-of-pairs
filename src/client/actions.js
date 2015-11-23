@@ -15,3 +15,12 @@ export function flip (gameId, playerId, cardId) {
     playerId: playerId
   };
 }
+
+export function endTurn (gameId, playerId) {
+  return {
+    type: "END_TURN",
+    remote: true,
+    gameId: gameId,
+    playerId: playerId
+  };
+}
