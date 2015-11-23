@@ -8,8 +8,8 @@ export class App extends Component {
   render() {
     return (
       <div>
-        <Game flip={this.props.flip} player={this.props.player} {...this.props.game} />
-        <Lobby {...this.props} />
+        {this.props.game ? <Game {...this.props} /> : null}
+        {this.props.lobby ? <Lobby {...this.props} /> : null}
       </div>
     );
   }
