@@ -43,7 +43,13 @@ function reducer (state, action) {
       if (isMatch(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1))) {
         var playerState = addCardsToPlayer(flippedState, gameId, flippedCardIds.get(0), flippedCardIds.get(1), action.playerId)
         var removedState = removeCardsFromGame(playerState, gameId, card1Id, card2Id);
-        return grantNewTurnToActivePlayer(removedState, gameId);
+
+        if (areCardsLeft(removedState, gameId)) {
+          return grantNewTurnToActivePlayer(removedState, gameId);
+        } else {
+          return declareWinner(removedState, gameId);
+        }
+
       } else {
         return changePlayerTurn(flippedState, gameId, action.playerId);
       }
@@ -156,26 +162,19 @@ function changePlayerTurn (state, gameId, previousPlayerId) {
   }));
 }
 
-module.exports = reducer;
-
-/*
-function setActivePlayer (state, gameId, playerId) {
-
-}
-
-function playerHasMovesLeft (state, gameId, playerId) {
-
-}
-
-
-
-
-
 function areCardsLeft (state, gameId) {
-
+  return state.getIn(["gamesById", gameId, "cards"]).toJS().
+           filter(function (card) {
+             return !card.isRemoved;
+           }).length > 0;
 }
 
-function declareWinner () {
+function declareWinner (state, gameId) {
+  var players = state.getIn(["gamesById", gameId, "players"]).toJS();
 
+  var winner = players[0].cards.length > players[1].cards.length ? players[0] : players[1];
+
+  return state.setIn(["gamesById", gameId, "winner"], Immutable.fromJS(winner));
 }
-*/
+
+module.exports = reducer;
