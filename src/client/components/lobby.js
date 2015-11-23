@@ -8,12 +8,13 @@ export default class Lobby extends Component {
   render() {
     return (
       <div className="lobby">
+        <h1>Welcome to the Game of Pairs!</h1>
+        {this.isPLayerLoggedIn() ? null : <Login {...this.props} />}
         <ul>
         {this.props.lobby.map((player) => {
-          return <li key={player.id}>{player.name}</li>;
+          return <li key={player.id}>{player.name} is waiting for players!</li>;
         })}
         </ul>
-        {this.isPLayerLoggedIn() ? null : <Login {...this.props} />}
       </div>
     );
   }
@@ -30,7 +31,7 @@ class Login extends Component {
 
   render() {
     return (
-      <input type="text" onKeyDown={this.handleKeyDown.bind(this)} />
+      <input type="text" onKeyDown={this.handleKeyDown.bind(this)} placeholder="play as..." />
     );
   }
 }
