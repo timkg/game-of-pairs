@@ -17,7 +17,7 @@ export default class Game extends Component {
         <div className="player-cards">
           <h2>{this.props.player.name}</h2>
           {this.props.player.cards.map((card) => {
-            return <img src={card.photo.thumbUrl} />;
+            return <div className="card--won"><img src={card.photo.thumbUrl} /></div>;
           })}
         </div>
         <div className="cards">
@@ -38,7 +38,7 @@ export default class Game extends Component {
         <div className="opponent-cards">
           <h2>{this.props.opponent.name}</h2>
           {this.props.opponent.cards.map((card) => {
-            return <img src={card.photo.thumbUrl} />;
+            return <div className="card--won"><img src={card.photo.thumbUrl} /></div>;
           })}
         </div>
       </div>

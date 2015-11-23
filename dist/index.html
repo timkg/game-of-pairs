@@ -54,6 +54,17 @@
       .card.revealed .card-back {
         display: none;
       }
+
+      .card--won {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        box-shadow: 0 0 2px #ccc;
+      }
+
+      .card--won+.card--won {
+        margin-top: -50px;
+      }
     </style>
   </head>
   <body>
